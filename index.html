@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HENAN FOLK ART STORIES | 河南非遗文化多模态英文宣传体系</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        :root {
+            --cinnabar: #E63946;
+            --ink: #1A1A1A;
+            --paper: #F7F5F0;
+            --gold: #C9A961;
+            --jade: #2A9D8F;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--paper);
+            color: var(--ink);
+            overflow-x: hidden;
+        }
+        
+        .serif {
+            font-family: 'Noto Serif SC', serif;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--paper);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--cinnabar);
+            border-radius: 4px;
+        }
+        
+        /* Paper Texture Overlay */
+        .paper-texture {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.03;
+            z-index: 9999;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        
+        /* Hero Animation */
+        .hero-pattern {
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(230, 57, 70, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(201, 169, 97, 0.15) 0%, transparent 50%);
+        }
+        
+        .scissors-cursor {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="%23E63946" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>') 16 16, auto;
+        }
+        
+        /* Card Hover Effects */
+        .feature-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(230, 57, 70, 0.1);
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px -15px rgba(230, 57, 70, 0.2);
+            border-color: var(--cinnabar);
+        }
+        
+        /* Text Scramble Effect */
+        .scramble-text {
+            display: inline-block;
+        }
+        
+        /* Modalal Dialog */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 26, 26, 0.95);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--cinnabar) 0%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Cut-out Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Navigation Blur */
+        .nav-blur {
+            backdrop-filter: blur(12px);
+            background: rgba(247, 245, 240, 0.8);
+        }
+        
+        /* Custom Button */
+        .btn-primary {
+            background: var(--cinnabar);
+            color: white;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+        
+        /* Grid Pattern */
+        .grid-pattern {
+            background-image: linear-gradient(rgba(230, 57, 70, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(230, 57, 70, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+    </style>
+</head>
+<body class="scissors-cursor">
+    <div class="paper-texture"></div>
+    
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 nav-blur border-b border-red-100 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center text-white font-bold text-xl serif">
+                        豫
+                    </div>
+                    <span class="text-xl font-bold tracking-tight">
+                        HENAN FOLK ART <span class="text-red-600">STORIES</span>
+                    </span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#features" class="text-gray-700 hover:text-red-600 transition-colors font-medium">核心特色</a>
+                    <a href="#scenarios" class="text-gray-700 hover:text-red-600 transition-colors font-medium">应用场景</a>
+                    <a href="#multimodal" class="text-gray-700 hover:text-red-600 transition-colors font-medium">多模态体系</a>
+                    <a href="#contact" class="btn-primary px-6 py-2 rounded-full font-medium">合作咨询</a>
+                </div>
+                <button class="md:hidden text-gray-700" onclick="toggleMobileMenu()">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-0 bg-white z-40 transform translate-x-full transition-transform duration-300 md:hidden pt-20">
+        <div class="flex flex-col items-center space-y-8 text-lg">
+            <a href="#features" class="text-gray-800" onclick="toggleMobileMenu()">核心特色</a>
+            <a href="#scenarios" class="text-gray-800" onclick="toggleMobileMenu()">应用场景</a>
+            <a href="#multimodal" class="text-gray-800" onclick="toggleMobileMenu()">多模态体系</a>
+            <a href="#contact" class="text-red-600 font-bold" onclick="toggleMobileMenu()">合作咨询</a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center hero-pattern pt-20 overflow-hidden">
+        <div class="absolute inset-0 grid-pattern opacity-30"></div>
+        
+        <!-- Decorative Elements -->
+        <div class="absolute top-40 left-10 w-64 h-64 opacity-20 floating" style="animation-delay: 0s;">
+            <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M100 20C120 60 140 80 180 100C140 120 120 140 100 180C80 140 60 120 20 100C60 80 80 60 100 20Z" fill="#E63946"/>
+            </svg>
+        </div>
+        <div class="absolute bottom-20 right-10 w-48 h-48 opacity-20 floating" style="animation-delay: 2s;">
+            <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="100" cy="100" r="80" stroke="#C9A961" stroke-width="2" stroke-dasharray="10 5"/>
+                <path d="M100 40 L100 160 M40 100 L160 100" stroke="#E63946" stroke-width="2"/>
+            </svg>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <div class="inline-block mb-6 px-4 py-1 rounded-full bg-red-50 border border-red-200 text-red-600 text-sm font-semibold tracking-wide uppercase">
+                New Liberal Arts Initiative · Cultural Going Global
+            </div>
+            <h1 class="serif text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight">
+                <span class="block scramble-text" id="hero-title-1">剪纸为媒</span>
+                <span class="block gradient-text mt-2" id="hero-title-2">让世界读懂河南</span>
+            </h1>
+            <p class="mt-6 max-w-2xl mx-auto text-xl md:text-2xl text-gray-600 leading-relaxed" id="hero-subtitle">
+                构建"文本+视觉+听觉"三位一体的多模态英文宣传体系，<br/>
+                以<span class="text-red-600 font-semibold">文化等效</span>翻译策略，推动中原非遗从"被观看"向"被理解"转变
+            </p>
+            <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="scrollToSection('features')" class="btn-primary px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">
+                    探索项目特色
+                </button>
+                <button onclick="openModal('demo-modal')" class="px-8 py-4 rounded-full text-lg font-semibold border-2 border-gray-800 hover:bg-gray-800 hover:text-white transition-all">
+                    观看演示视频
+                </button>
+            </div>
+            
+            <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto text-center">
+                <div class="stat-item">
+                    <div class="text-3xl font-bold text-red-600">10+</div>
+                    <div class="text-sm text-gray-600 mt-1">非遗传承人合作</div>
+                </div>
+                <div class="stat-item">
+                    <div class="text-3xl font-bold text-red-600">3</div>
+                    <div class="text-sm text-gray-600 mt-1">大模态融合</div>
+                </div>
+                <div class="stat-item">
+                    <div class="text-3xl font-bold text-red-600">300万</div>
+                    <div class="text-sm text-gray-600 mt-1">首年营收目标(元)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="text-3xl font-bold text-red-600">46.7%</div>
+                    <div class="text-sm text-gray-600 mt-1">预期利润率</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+        </div>
+    </section>
+
+    <!-- Core Features Section -->
+    <section id="features" class="py-24 bg-white relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="serif text-4xl md:text-5xl font-bold mb-4">核心特色</h2>
+                <p class="text-gray-600 text-lg max-w-2xl mx-auto">跨界融合外语专长、非遗研究与数字媒体技术，打造学术级精准翻译与电影级视觉品质</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="feature-card bg-white p-8 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150"></div>
+                    <div class="relative z-10">
+                        <div class="w-14 h-14 bg-red-100 rounded-xl flex items-center justify-center mb-6 text-red-600">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
+                        </div>
+                        <h3 class="serif text-2xl font-bold mb-3">文化等效翻译</h3>
+                        <p class="text-gray-600 leading-relaxed">构建"中原非遗专业词库"，摒弃字面直译，采用文化等效策略。如"榴开百子"不仅译为"pomegranate"，更阐释其象征多子多福的文化寓意。</p>
+                        <div class="mt-4 flex items-center text-red-600 font-medium">
+                            <span>查看术语库</span>
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card bg-white p-8 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150"></div>
+                    <div class="relative z-10">
+                        <div class="w-14 h-14 bg-amber-100 rounded-xl flex items-center justify-center mb-6 text-amber-600">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                        </div>
+                        <h3 class="serif text-2xl font-bold mb-3">AIGC技术赋能</h3>
+                        <p class="text-gray-600 leading-relaxed">利用AI生成技术将二维静态剪纸转化为三维动态场景，开发"可听的剪纸"数智标识系统，实现AR动态展示与虚拟互动体验。</p>
+                        <div class="mt-4 flex items-center text-amber-600 font-medium">
+                            <span>体验技术演示</span>
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card bg-white p-8 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150"></div>
+                    <div class="relative z-10">
+                        <div class="w-14 h-14 bg-emerald-100 rounded-xl flex items-center justify-center mb-6 text-emerald-600">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                        </div>
+                        <h3 class="serif text-2xl font-bold mb-3">独家IP资源</h3>
+                        <p class="text-gray-600 leading-relaxed">与刘秀华（国家级传承人）、张海鹏等十余位核心传承人建立独家合作，掌握从《千里江山图》到"七夕情缘"系列的第一手数字化采集权。</p>
+                        <div class="mt-4 flex items-center text-emerald-600 font-medium">
+                            <span>查看合作传承人</span>
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Multimodal System Section -->
+    <section id="multimodal" class="py-24 bg-gray-50 relative overflow-hidden">
+        <div class="absolute inset-0 grid-pattern opacity-50"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="serif text-4xl md:text-5xl font-bold mb-4">多模态宣传体系</h2>
+                <p class="text-gray-600 text-lg">四位一体，构建立体化内容矩阵</p>
+            </div>
+
+            <div class="space-y-8">
+                <!-- Text Modal -->
+                <div class="bg-white rounded-3xl p-8 md:p-12 shadow-xl flex flex-col md:flex-row items-center gap-8 transform transition-all hover:scale-[1.02]">
+                    <div class="w-full md:w-1/3">
+                        <div class="aspect-square bg-red-50 rounded-2xl flex items-center justify-center relative overflow-hidden">
+                            <div class="absolute inset-0 opacity-20" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(230,57,70,.1) 35px, rgba(230,57,70,.1) 70px);"></div>
+                            <span class="serif text-6xl text-red-600 font-bold">文</span>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-2/3">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm font-semibold">Text</span>
+                            <h3 class="serif text-2xl font-bold">文本模态：深度叙事体系</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4 text-lg">构建基于"文化等效"原则的专业语料库，针对"锯齿纹"、"月牙纹"等特色术语，创造既保持学术严谨性又富有叙事美感的英文解说。</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">专业讲解词</span>
+                            <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">社交媒体文案</span>
+                            <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">术语标准化</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Modal -->
+                <div class="bg-white rounded-3xl p-8 md:p-12 shadow-xl flex flex-col md:flex-row-reverse items-center gap-8 transform transition-all hover:scale-[1.02]">
+                    <div class="w-full md:w-1/3">
+                        <div class="aspect-square bg-amber-50 rounded-2xl flex items-center justify-center relative overflow-hidden">
+                            <div class="absolute w-full h-full bg-gradient-to-br from-amber-200/30 to-transparent rounded-full transform scale-150"></div>
+                            <svg class="w-24 h-24 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-2/3 text-right md:text-left">
+                        <div class="flex items-center justify-end md:justify-start gap-3 mb-4">
+                            <span class="px-3 py-1 bg-amber-100 text-amber-600 rounded-full text-sm font-semibold">Visual</span>
+                            <h3 class="serif text-2xl font-bold">视觉模态：沉浸式传播矩阵</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4 text-lg">采用第一人称叙事视角拍摄，运用AIGC技术将二维剪纸转化为三维动态场景，构建数字化高清纹样视觉图谱数据库。</p>
+                        <div class="flex flex-wrap gap-2 justify-end md:justify-start">
+                            <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">4K纪录片</span>
+                            <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">AR增强现实</span>
+                            <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">AI视觉生成</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Audio Modal -->
+                <div class="bg-white rounded-3xl p-8 md:p-12 shadow-xl flex flex-col md:flex-row items-center gap-8 transform transition-all hover:scale-[1.02]">
+                    <div class="w-full md:w-1/3">
+                        <div class="aspect-square bg-emerald-50 rounded-2xl flex items-center justify-center relative overflow-hidden">
+                            <div class="absolute inset-0 flex items-center justify-center opacity-10">
+                                <svg class="w-full h-full" viewBox="0 0 100 100" fill="none"><path d="M10 50 Q 30 20, 50 50 T 90 50" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                            </div>
+                            <svg class="w-24 h-24 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-2/3">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="px-3 py-1 bg-emerald-100 text-emerald-600 rounded-full text-sm font-semibold">Audio</span>
+                            <h3 class="serif text-2xl font-bold">听觉模态："声音里的非遗"</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4 text-lg">制作高质量双语沉浸式音频，采用母语级配音并融入豫剧等地方音乐元素，录制传承人口述历史，保留方言原声配英文旁白。</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">双语配音</span>
+                            <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">口述历史</span>
+                            <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">沉浸式音效</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Modal -->
+                <div class="bg-white rounded-3xl p-8 md:p-12 shadow-xl flex flex-col md:flex-row-reverse items-center gap-8 transform transition-all hover:scale-[1.02]">
+                    <div class="w-full md:w-1/3">
+                        <div class="aspect-square bg-purple-50 rounded-2xl flex items-center justify-center relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-tr from-purple-200/40 to-transparent"></div>
+                            <svg class="w-24 h-24 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-2/3 text-right md:text-left">
+                        <div class="flex items-center justify-end md:justify-start gap-3 mb-4">
+                            <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-sm font-semibold">Interactive</span>
+                            <h3 class="serif text-2xl font-bold">交互模态：数智化体验升级</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4 text-lg">推出"可听的剪纸"数智标识，嵌入智能二维码联动AR展示；开发双语小程序，设计虚拟剪纸互动体验，让全球用户远程参与创作。</p>
+                        <div class="flex flex-wrap gap-2 justify-end md:justify-start">
+                            <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">AR扫码体验</span>
+                            <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">虚拟创作</span>
+                            <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">双语数字展厅</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Application Scenarios -->
+    <section id="scenarios" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="serif text-4xl md:text-5xl font-bold mb-4">潜在应用场景</h2>
+                <p class="text-gray-600 text-lg">覆盖文旅、教育、电商三大核心领域</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Scenario 1 -->
+                <div class="group relative overflow-hidden rounded-2xl bg-gray-900 text-white cursor-pointer" onclick="openModal('scenario-1')">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
+                    <div class="absolute inset-0 bg-red-600/20 group-hover:bg-red-600/30 transition-colors"></div>
+                    <div class="h-96 flex flex-col justify-end p-8 relative z-20">
+                        <div class="mb-4">
+                            <span class="px-3 py-1 bg-white/20 backdrop-blur rounded-full text-sm">文旅场馆</span>
+                        </div>
+                        <h3 class="serif text-2xl font-bold mb-2">智慧景区国际化升级</h3>
+                        <p class="text-gray-300 text-sm mb-4">为太昊伏羲陵、河南省科技馆等场馆提供多语言智慧导览系统，提升入境游客体验深度。</p>
+                        <div class="flex items-center text-red-400 font-medium text-sm group-hover:translate-x-2 transition-transform">
+                            查看详情 <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scenario 2 -->
+                <div class="group relative overflow-hidden rounded-2xl bg-gray-900 text-white cursor-pointer" onclick="openModal('scenario-2')">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
+                    <div class="absolute inset-0 bg-amber-600/20 group-hover:bg-amber-600/30 transition-colors"></div>
+                    <div class="h-96 flex flex-col justify-end p-8 relative z-20">
+                        <div class="mb-4">
+                            <span class="px-3 py-1 bg-white/20 backdrop-blur rounded-full text-sm">教育领域</span>
+                        </div>
+                        <h3 class="serif text-2xl font-bold mb-2">国际中文教育内容供给</h3>
+                        <p class="text-gray-300 text-sm mb-4">进入高校留学生课程体系及海外华文教育网络，成为学习中国语言与民间艺术的优质资源。</p>
+                        <div class="flex items-center text-amber-400 font-medium text-sm group-hover:translate-x-2 transition-transform">
+                            查看详情 <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scenario 3 -->
+                <div class="group relative overflow-hidden rounded-2xl bg-gray-900 text-white cursor-pointer" onclick="openModal('scenario-3')">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
+                    <div class="absolute inset-0 bg-emerald-600/20 group-hover:bg-emerald-600/30 transition-colors"></div>
+                    <div class="h-96 flex flex-col justify-end p-8 relative z-20">
+                        <div class="mb-4">
+                            <span class="px-3 py-1 bg-white/20 backdrop-blur rounded-full text-sm">文创消费</span>
+                        </div>
+                        <h3 class="serif text-2xl font-bold mb-2">"可听的剪纸"文创礼盒</h3>
+                        <p class="text-gray-300 text-sm mb-4">将手工剪纸与多模态解说内容结合，通过景区文创店、机场书店及跨境电商渠道销售。</p>
+                        <div class="flex items-center text-emerald-400 font-medium text-sm group-hover:translate-x-2 transition-transform">
+                            查看详情 <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Application Matrix Table -->
+            <div class="mt-16 overflow-hidden rounded-2xl border border-gray-200 shadow-lg">
+                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                    <h3 class="font-bold text-lg">多模态传播渠道矩阵</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-100 text-gray-700">
+                            <tr>
+                                <th class="px-6 py-4 font-semibold">模态类型</th>
+                                <th class="px-6 py-4 font-semibold">核心载体</th>
+                                <th class="px-6 py-4 font-semibold">传播渠道</th>
+                                <th class="px-6 py-4 font-semibold">目标受众</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-red-50/50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-red-600">视频+听觉</td>
+                                <td class="px-6 py-4">纪录片、短视频</td>
+                                <td class="px-6 py-4">YouTube、TikTok</td>
+                                <td class="px-6 py-4">海外大众、文化爱好者</td>
+                            </tr>
+                            <tr class="hover:bg-amber-50/50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-amber-600">图文+交互</td>
+                                <td class="px-6 py-4">数字化画册、H5</td>
+                                <td class="px-6 py-4">Instagram、官网</td>
+                                <td class="px-6 py-4">设计师、青年创意群体</td>
+                            </tr>
+                            <tr class="hover:bg-emerald-50/50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-emerald-600">实体+数智</td>
+                                <td class="px-6 py-4">文创礼盒、扫码卡片</td>
+                                <td class="px-6 py-4">景区礼品店、郑州东站</td>
+                                <td class="px-6 py-4">入境游客、商务伴手礼</td>
+                            </tr>
+                            <tr class="hover:bg-purple-50/50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-purple-600">体系化课程</td>
+                                <td class="px-6 py-4">双语教案、课件</td>
+                                <td class="px-6 py-4">海外华文学校、留学生院</td>
+                                <td class="px-6 py-4">在校师生、跨文化学习者</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Business Model -->
+    <section class="py-24 bg-gray-900 text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 40px 40px;"></div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="serif text-4xl md:text-5xl font-bold mb-6">商业模式</h2>
+                    <p class="text-gray-400 text-lg mb-8">构建"内容生产—IP授权—渠道变现"的完整商业闭环，首年预期营收300万元，利润率46.7%</p>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-full bg-red-600/20 flex items-center justify-center flex-shrink-0 text-red-500 font-bold">01</div>
+                            <div>
+                                <h4 class="font-bold text-xl mb-2">内容生产与服务费</h4>
+                                <p class="text-gray-400">为非遗场馆提供英文内容整体解决方案，单场馆合同金额10-50万元</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0 text-amber-500 font-bold">02</div>
+                            <div>
+                                <h4 class="font-bold text-xl mb-2">IP授权与内容分发</h4>
+                                <p class="text-gray-400">授权在线教育平台及国际文化机构，嵌入跨境电商商品详情页</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-full bg-emerald-600/20 flex items-center justify-center flex-shrink-0 text-emerald-500 font-bold">03</div>
+                            <div>
+                                <h4 class="font-bold text-xl mb-2">衍生品销售</h4>
+                                <p class="text-gray-400">"可听的剪纸"文创礼盒毛利率达60%以上，融合数字化内容与传统工艺</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="aspect-square rounded-3xl bg-gradient-to-br from-red-600/20 to-amber-600/20 p-8 flex items-center justify-center">
+                        <div class="text-center">
+                            <div class="text-6xl font-bold mb-2 gradient-text">300万</div>
+                            <div class="text-gray-400 mb-8">首年营收目标（元）</div>
+                            <div class="grid grid-cols-2 gap-4 text-center">
+                                <div class="bg-white/5 rounded-2xl p-4 backdrop-blur">
+                                    <div class="text-3xl font-bold text-red-400">46.7%</div>
+                                    <div class="text-sm text-gray-400 mt-1">预期利润率</div>
+                                </div>
+                                <div class="bg-white/5 rounded-2xl p-4 backdrop-blur">
+                                    <div class="text-3xl font-bold text-amber-400">500万</div>
+                                    <div class="text-sm text-gray-400 mt-1">线上触达人数</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-24 bg-red-600 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <path d="M0 100 C 20 0 50 0 100 100 Z" fill="white"/>
+            </svg>
+        </div>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <h2 class="serif text-4xl md:text-5xl font-bold text-white mb-6">开启文化出海之旅</h2>
+            <p class="text-red-100 text-xl mb-12">无论是文旅机构、教育单位还是投资方，我们期待与您共同探索河南非遗的国际传播新路径</p>
+            
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <div class="bg-white/10 backdrop-blur rounded-2xl p-6 text-white">
+                    <svg class="w-8 h-8 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <div class="font-semibold">商务合作</div>
+                    <div class="text-sm text-red-100 mt-1">contact@henanfolkart.com</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur rounded-2xl p-6 text-white">
+                    <svg class="w-8 h-8 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <div class="font-semibold">项目地址</div>
+                    <div class="text-sm text-red-100 mt-1">河南省郑州市</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur rounded-2xl p-6 text-white">
+                    <svg class="w-8 h-8 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <div class="font-semibold">工作时间</div>
+                    <div class="text-sm text-red-100 mt-1">周一至周五 9:00-18:00</div>
+                </div>
+            </div>
+
+            <button onclick="openModal('contact-modal')" class="bg-white text-red-600 px-12 py-4 rounded-full font-bold text-lg hover:bg-red-50 transition-colors shadow-xl">
+                立即咨询合作
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-3 mb-4 md:mb-0">
+                    <div class="w-8 h-8 bg-red-600 rounded flex items-center justify-center text-white font-bold serif text-sm">豫</div>
+                    <span class="text-white font-bold">HENAN FOLK ART STORIES</span>
+                </div>
+                <div class="text-sm">
+                    © 2026 河南非遗文化多模态英文宣传体系项目. 保留所有权利.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div id="demo-modal" class="modal items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
+            <button onclick="closeModal('demo-modal')" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors z-10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <div class="p-8">
+                <h3 class="serif text-3xl font-bold mb-4">项目演示视频</h3>
+                <div class="aspect-video bg-gray-100 rounded-xl flex items-center justify-center mb-6">
+                    <div class="text-center text-gray-500">
+                        <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <p>视频加载区域（实际部署时嵌入视频播放器）</p>
+                    </div>
+                </div>
+                <p class="text-gray-600">展示刘秀华剪纸创作过程的双语导览视频片段，包含第一人称叙事视角、4K特写镜头及英文专业解说。</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="scenario-1" class="modal items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-8 relative">
+            <button onclick="closeModal('scenario-1')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <h3 class="serif text-2xl font-bold mb-4 text-red-600">文旅场馆应用场景</h3>
+            <div class="space-y-4 text-gray-600">
+                <p><strong>核心需求：</strong>太昊伏羲陵（5A景区）、河南省科技馆等场馆面临入境游客增长但多语言服务不足的问题。</p>
+                <p><strong>解决方案：</strong></p>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li>提供展品英文说明体系设计与撰写</li>
+                    <li>部署双语智慧导览系统（扫码听讲解）</li>
+                    <li>制作沉浸式双语宣传片投放于景区大屏</li>
+                    <li>培训景区工作人员跨文化沟通技巧</li>
+                </ul>
+                <p><strong>预期效果：</strong>提升海外游客停留时间30%，提高二次消费转化率，助力景区国际化评级。</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="scenario-2" class="modal items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-8 relative">
+            <button onclick="closeModal('scenario-2')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <h3 class="serif text-2xl font-bold mb-4 text-amber-600">教育领域应用场景</h3>
+            <div class="space-y-4 text-gray-600">
+                <p><strong>核心需求：</strong>国际中文教育缺乏体系化、可视化的非遗文化教学资源。</p>
+                <p><strong>解决方案：</strong></p>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li>开发"剪纸里的中国故事"系列课程体系</li>
+                    <li>提供双语教案、课件及教学视频</li>
+                    <li>设计虚拟剪纸互动体验供远程教学使用</li>
+                    <li>建立河南非遗多模态英文数据库供学术研究</li>
+                </ul>
+                <p><strong>合作对象：</strong>海外华文学校、孔子学院、高校留学生院、国际学校文化课程部门。</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="scenario-3" class="modal items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-8 relative">
+            <button onclick="closeModal('scenario-3')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <h3 class="serif text-2xl font-bold mb-4 text-emerald-600">文创消费应用场景</h3>
+            <div class="space-y-4 text-gray-600">
+                <p><strong>核心需求：</strong>传统文创产品同质化严重，缺乏数字化体验与文化内涵阐释。</p>
+                <p><strong>解决方案：</strong></p>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li>开发"可听的剪纸"高端文创礼盒（实体+数字内容）</li>
+                    <li>嵌入智能二维码，扫码观看创作视频与文化解读</li>
+                    <li>机场书店、高铁站文创店专柜展示</li>
+                    <li>跨境电商平台详情页嵌入双语视频提升转化率</li>
+                </ul>
+                <p><strong>产品特色：</strong>手工剪纸实物+收藏证书+双语音视频入口，定价200元以上，毛利率超60%。</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="contact-modal" class="modal items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-8 relative">
+            <button onclick="closeModal('contact-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <h3 class="serif text-2xl font-bold mb-6">合作咨询</h3>
+            <form onsubmit="event.preventDefault(); alert('感谢您的咨询！我们会尽快与您联系。'); closeModal('contact-modal');" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">姓名</label>
+                    <input type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">邮箱</label>
+                    <input type="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">机构类型</label>
+                    <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all">
+                        <option>文旅景区/博物馆</option>
+                        <option>教育机构</option>
+                        <option>投资方</option>
+                        <option>文创企业</option>
+                        <option>其他</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">咨询内容</label>
+                    <textarea rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors">
+                    提交咨询
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Initialize GSAP ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero animations
+        gsap.from("#hero-title-1", {
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            ease: "power3.out"
+        });
+        
+        gsap.from("#hero-title-2", {
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            delay: 0.2,
+            ease: "power3.out"
+        });
+        
+        gsap.from("#hero-subtitle", {
+            opacity: 0,
+            y: 30,
+            duration: 1,
+            delay: 0.4,
+            ease: "power3.out"
+        });
+
+        gsap.from(".stat-item", {
+            opacity: 0,
+            y: 30,
+            duration: 0.8,
+            stagger: 0.1,
+            delay: 0.6,
+            ease: "power3.out"
+        });
+
+        // Scroll animations for sections
+        gsap.utils.toArray(".feature-card").forEach((card, i) => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
+                },
+                opacity: 0,
+                y: 50,
+                duration: 0.8,
+                delay: i * 0.1,
+                ease: "power3.out"
+            });
+        });
+
+        // Navbar scroll effect
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            const navbar = document.getElementById('navbar');
+            
+            if (currentScroll > 100) {
+                navbar.classList.add('shadow-md');
+            } else {
+                navbar.classList.remove('shadow-md');
+            }
+            lastScroll = currentScroll;
+        });
+
+        // Modal functions
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on outside click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            if (menu.classList.contains('translate-x-full')) {
+                menu.classList.remove('translate-x-full');
+            } else {
+                menu.classList.add('translate-x-full');
+            }
+        }
+
+        // Smooth scroll
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Text scramble effect for hero
+        class TextScramble {
+            constructor(el) {
+                this.el = el;
+                this.chars = '!<>-_\\/[]{}—=+*^?#________';
+                this.update = this.update.bind(this);
+            }
+            setText(newText) {
+                const oldText = this.el.innerText;
+                const length = Math.max(oldText.length, newText.length);
+                const promise = new Promise((resolve) => this.resolve = resolve);
+                this.queue = [];
+                for (let i = 0; i < length; i++) {
+                    const from = oldText[i] || '';
+                    const to = newText[i] || '';
+                    const start = Math.floor(Math.random() * 40);
+                    const end = start + Math.floor(Math.random() * 40);
+                    this.queue.push({ from, to, start, end });
+                }
+                cancelAnimationFrame(this.frameRequest);
+                this.frame = 0;
+                this.update();
+                return promise;
+            }
+            update() {
+                let output = '';
+                let complete = 0;
+                for (let i = 0, n = this.queue.length; i < n; i++) {
+                    let { from, to, start, end, char } = this.queue[i];
+                    if (this.frame >= end) {
+                        complete++;
+                        output += to;
+                    } else if (this.frame >= start) {
+                        if (!char || Math.random() < 0.28) {
+                            char = this.randomChar();
+                            this.queue[i].char = char;
+                        }
+                        output += `<span class="text-red-400">${char}</span>`;
+                    } else {
+                        output += from;
+                    }
+                }
+                this.el.innerHTML = output;
+                if (complete === this.queue.length) {
+                    this.resolve();
+                } else {
+                    this.frameRequest = requestAnimationFrame(this.update);
+                    this.frame++;
+                }
+            }
+            randomChar() {
+                return this.chars[Math.floor(Math.random() * this.chars.length)];
+            }
+        }
+
+        // Initialize scramble on hover for desktop
+        if (window.innerWidth > 768) {
+            const el = document.getElementById('hero-title-2');
+            const fx = new TextScramble(el);
+            let counter = 0;
+            const phrases = [
+                '让世界读懂河南',
+                'Cultural Going Global',
+                'New Liberal Arts',
+                '让世界读懂河南'
+            ];
+            
+            setInterval(() => {
+                fx.setText(phrases[counter]).then(() => {
+                    setTimeout(() => {
+                        counter = (counter + 1) % phrases.length;
+                    }, 2000);
+                });
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
