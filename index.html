@@ -149,6 +149,25 @@
             linear-gradient(90deg, rgba(230, 57, 70, 0.05) 1px, transparent 1px);
             background-size: 50px 50px;
         }
+
+        /* Video Container */
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            overflow: hidden;
+            background: #000;
+            border-radius: 12px 12px 0 0;
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
 </head>
 <body class="scissors-cursor">
@@ -222,7 +241,8 @@
                 <button onclick="scrollToSection('features')" class="btn-primary px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">
                     探索项目特色
                 </button>
-                <button onclick="openModal('demo-modal')" class="px-8 py-4 rounded-full text-lg font-semibold border-2 border-gray-800 hover:bg-gray-800 hover:text-white transition-all">
+                <button onclick="openVideoModal()" class="px-8 py-4 rounded-full text-lg font-semibold border-2 border-gray-800 hover:bg-gray-800 hover:text-white transition-all flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                     观看演示视频
                 </button>
             </div>
@@ -627,21 +647,43 @@
         </div>
     </footer>
 
-    <!-- Modals -->
-    <div id="demo-modal" class="modal items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
-            <button onclick="closeModal('demo-modal')" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors z-10">
+    <!-- Video Modal - 使用延迟加载避免跨域问题 -->
+    <div id="video-modal" class="modal items-center justify-center p-4">
+        <div class="bg-black rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden relative shadow-2xl">
+            <!-- Close Button -->
+            <button onclick="closeVideoModal()" class="absolute top-4 right-4 z-20 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-colors backdrop-blur">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
-            <div class="p-8">
-                <h3 class="serif text-3xl font-bold mb-4">项目演示视频</h3>
-                <div class="aspect-video bg-gray-100 rounded-xl flex items-center justify-center mb-6">
-                    <div class="text-center text-gray-500">
-                        <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        <p>视频加载区域（实际部署时嵌入视频播放器）</p>
+            
+            <!-- Video Container -->
+            <div id="video-container" class="video-wrapper">
+                <!-- 视频iframe将在这里动态插入 -->
+                <div class="absolute inset-0 flex items-center justify-center text-white">
+                    <div class="text-center">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+                        <p>加载中...</p>
                     </div>
                 </div>
-                <p class="text-gray-600">展示刘秀华剪纸创作过程的双语导览视频片段，包含第一人称叙事视角、4K特写镜头及英文专业解说。</p>
+            </div>
+            
+            <!-- Video Info -->
+            <div class="p-6 bg-gray-900 text-white">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <h3 class="serif text-2xl font-bold mb-2">项目演示视频</h3>
+                        <p class="text-gray-400 mb-3">河南非遗文化多模态英文宣传体系项目介绍与展示</p>
+                        <div class="flex flex-wrap gap-2 text-sm">
+                            <span class="px-3 py-1 bg-red-600/20 text-red-400 rounded-full">中英双语</span>
+                            <span class="px-3 py-1 bg-gray-700 rounded-full">多模态展示</span>
+                            <span class="px-3 py-1 bg-gray-700 rounded-full">非遗文化</span>
+                        </div>
+                    </div>
+                    <a href="https://www.bilibili.com/video/BV1rY411b7g3" target="_blank" rel="noopener noreferrer" 
+                       class="ml-4 px-4 py-2 bg-[#00A1D6] hover:bg-[#0084B3] text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2 flex-shrink-0">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .355-.124.657-.373.906zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.786 1.894v7.52c.017.764.28 1.396.786 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.497.769-1.129.786-1.893v-7.52c-.017-.765-.28-1.396-.786-1.894-.507-.497-1.134-.755-1.88-.773zM8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.386-.947.258-.257.574-.386.947-.386zm8 0c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373z"/></svg>
+                        在B站观看
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -809,7 +851,55 @@
             lastScroll = currentScroll;
         });
 
-        // Modal functions
+        // Video Modal Functions
+        let videoIframe = null;
+        
+        function openVideoModal() {
+            const modal = document.getElementById('video-modal');
+            const container = document.getElementById('video-container');
+            
+            // 清空容器
+            container.innerHTML = '';
+            
+            // 创建iframe（使用https协议）
+            videoIframe = document.createElement('iframe');
+            videoIframe.src = 'https://player.bilibili.com/player.html?bvid=BV1rY411b7g3&page=1&high_quality=1&danmaku=0&autoplay=1';
+            videoIframe.scrolling = 'no';
+            videoIframe.border = '0';
+            videoIframe.frameBorder = 'no';
+            videoIframe.framespacing = '0';
+            videoIframe.allowFullscreen = true;
+            videoIframe.style.position = 'absolute';
+            videoIframe.style.top = '0';
+            videoIframe.style.left = '0';
+            videoIframe.style.width = '100%';
+            videoIframe.style.height = '100%';
+            videoIframe.title = '河南非遗文化多模态英文宣传体系项目演示';
+            
+            // 添加sandbox属性以提高安全性
+            videoIframe.sandbox = 'allow-scripts allow-same-origin allow-popups allow-presentation';
+            
+            container.appendChild(videoIframe);
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeVideoModal() {
+            const modal = document.getElementById('video-modal');
+            const container = document.getElementById('video-container');
+            
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            
+            // 延迟清空iframe以停止播放
+            setTimeout(() => {
+                container.innerHTML = '';
+                videoIframe = null;
+            }, 300);
+        }
+
+        // General Modal functions
         function openModal(id) {
             document.getElementById(id).classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -824,8 +914,11 @@
         document.querySelectorAll('.modal').forEach(modal => {
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
-                    modal.classList.remove('active');
-                    document.body.style.overflow = '';
+                    if (modal.id === 'video-modal') {
+                        closeVideoModal();
+                    } else {
+                        closeModal(modal.id);
+                    }
                 }
             });
         });
@@ -920,6 +1013,20 @@
                 });
             }, 4000);
         }
+
+        // 键盘ESC关闭模态框
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const activeModal = document.querySelector('.modal.active');
+                if (activeModal) {
+                    if (activeModal.id === 'video-modal') {
+                        closeVideoModal();
+                    } else {
+                        closeModal(activeModal.id);
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html>
